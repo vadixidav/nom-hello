@@ -49,8 +49,8 @@ fn main() {
 
 #[test]
 fn test0() {
-    match eval("    (   - 2 0.1    (*   4 (+ 2 -0.3) 2) (   + 4 2   )   )".as_bytes()) {
-        nom::IResult::Done(_, res) => assert_eq!(res, -17.7),
+    match eval("(+    (   - 2 0.1    (*   4 (+ 2 -0.3) 2) (   + 4 2   )   )(+ 1 1))".as_bytes()) {
+        nom::IResult::Done(_, res) => assert_eq!(res, -15.7),
         _ => panic!(),
     }
 }
