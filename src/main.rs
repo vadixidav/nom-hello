@@ -22,19 +22,16 @@ named!(num<f64>, alt_complete!(
         f64::from_str
 )));
 
-// Evaluate remaining list elements and apply the function on it to modify the accumulator initialized with `init`.
-named_args!(foldop<'a>(init: f64, f: &'a Fn(f64, f64) -> f64)<f64>, fold_many0!(eval, init, f));
-
 // Evaluate a list which is wrapped in parenthesis and begins with an atom followed by expressions.
 named!(list<f64>, delimited!(tag!("("), ws!(alt_complete!(
     // Addition
-    preceded!(tag!("+"), apply!(foldop, 0.0, &|acc, item| acc + item)) |
+    preceded!(tag!("+"), fold_many0!(eval, 0.0, |acc, item| acc + item)) |
     // Subtraction
-    do_parse!(tag!("-") >> init: num >> res: apply!(foldop, init, &|acc, item| acc - item) >> (res)) |
+    do_parse!(tag!("-") >> init: num >> res: fold_many0!(eval, init, |acc, item| acc - item) >> (res)) |
     // Multiplication
-    preceded!(tag!("*"), apply!(foldop, 1.0, &|acc, item| acc * item)) |
+    preceded!(tag!("*"), fold_many0!(eval, 1.0, &|acc, item| acc * item)) |
     // Division
-    do_parse!(tag!("/") >> init: num >> res: apply!(foldop, init, &|acc, item| acc / item) >> (res))
+    do_parse!(tag!("/") >> init: num >> res: fold_many0!(eval, init, &|acc, item| acc / item) >> (res))
 )), tag!(")")));
 
 // Evaluate list or a number.
