@@ -29,9 +29,9 @@ named!(list<f64>, delimited!(tag!("("), ws!(alt_complete!(
     // Subtraction
     do_parse!(tag!("-") >> init: num >> res: fold_many0!(eval, init, |acc, item| acc - item) >> (res)) |
     // Multiplication
-    preceded!(tag!("*"), fold_many0!(eval, 1.0, &|acc, item| acc * item)) |
+    preceded!(tag!("*"), fold_many0!(eval, 1.0, |acc, item| acc * item)) |
     // Division
-    do_parse!(tag!("/") >> init: num >> res: fold_many0!(eval, init, &|acc, item| acc / item) >> (res))
+    do_parse!(tag!("/") >> init: num >> res: fold_many0!(eval, init, |acc, item| acc / item) >> (res))
 )), tag!(")")));
 
 // Evaluate list or a number.
